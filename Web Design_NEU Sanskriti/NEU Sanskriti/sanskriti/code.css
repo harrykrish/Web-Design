@@ -1,0 +1,403 @@
+Bootstrap Animation:
+
+#upEve{  
+   -webkit-animation-name: example; 
+   -webkit-animation-duration: 4s; 
+   animation-name: example;
+   animation-duration: 4s;
+
+   background: white;
+   -webkit-transition: width 2s; 
+   transition: width 2s;
+}
+
+#upEve:hover{
+     width: 70%;
+background: #0aa0f4 ;
+}
+
+@keyframes example {
+   from {background-color: white;}
+   to {background-color: #0aa0f4 ;}
+}
+
+Angular JS:
+
+<section id="contact">
+        <div class="container"   ng-app="myApp" ng-controller="myCtrl">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2 class="section-heading"><font color="black"> GET INVOLVED</h2>
+                    <h3 class="section-subheading text-muted"></h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <form name="sentMessage" action="index.php" id="contactForm"  method="post" >
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <input type="text" class="form-control" placeholder="Your Name *" id="name" name="name" required >
+                                    <p class="help-block text-danger"></p>
+                                </div>
+                                <div class="form-group">
+                                    <input type="email" ng-change="emailchange()" ng-model="email" class="form-control" placeholder="Your Email *" id="email" name="mail" required >
+                                    <p class="help-block text-danger">{{emailmsg}}</p>
+                                    <?php
+                                        if($f>0)
+                                        echo "mail-id already exists";
+                                    ?>
+                                </div>
+                                <div class="form-group">
+                                    <input type="tel" class="form-control" placeholder="Your Phone *" id="phone" name="phone" required >
+                                    <p class="help-block text-danger"></p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <input type="text" class="form-control" placeholder="Your Username *" id="Username" name="username" required data-validation-required-message="Please enter your Username.">
+                                    <p class="help-block text-danger"></p>
+                                    <?php
+                                        if($da1>0)
+                                        echo "Username already exists";
+                                    ?>
+                                </div>
+                                <div class="form-group">
+                                    <input type="password" ng-change="passwordchange()" ng-model="password" class="form-control" placeholder="Your Password *" id="Password" name="password" required >
+                                    <p class="help-block text-danger">{{passwordmsg}}</p>
+                                </div>
+                                <div class="form-group">
+                                    <input type="password" class="form-control" placeholder="Confirm Password *" id="Password" required data-validation-required-message="Please confirm your password.">
+                                    <p class="help-block text-danger"></p>
+                                </div>
+                            </div>
+                             <div class="clearfix"></div> 
+                             <div class="col-lg-12 text-center"> 
+                                <!-- <div id="success"></div> -->
+                               <input type="submit" name="submit" class="btn btn-xl" value="submit"/>                               
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+             </div>
+    </section>
+
+    <script >
+       var app = angular.module('myApp', []);
+       app.controller('myCtrl', function($scope) {
+       $scope.password="";    
+       $scope.passwordmsg="";
+       $scope.email="";    
+       $scope.emailmsg="";
+       $scope.passwordchange = function() {
+           var checkLetter = /[A-Z]/.test($scope.password);
+           var checkNumber =  /[0-9]/.test($scope.password)
+           if(checkLetter && checkNumber ){
+           $scope.passwordmsg="Strong";
+           }else{
+               $scope.passwordmsg="Weak"; 
+           }
+       };
+
+       $scope.emailchange = function() {
+           var checkemail = $scope.email.endsWith("@husky.neu.edu");
+          
+           if(!checkemail){
+           $scope.emailmsg="Invalid Email";
+           }else{
+               $scope.emailmsg=""; 
+           }
+       };
+   });
+   </script>
+
+
+PHP:
+
+
+<?php
+    session_start();
+    $state=5;
+    $login=0;
+    if(isset($_POST['login_submit']))
+    {
+        function fun1()
+        {
+            $_SESSION['upusername']=$_POST['login_username'];
+        }
+        if($_POST['login_username']=='' or $_POST['login_password']=='')
+        {
+            $state=0;
+        }
+        else{
+            $cxn=mysqli_connect("localhost","root","","sanskriti_db") or die("Cannot connect to database");
+            $u=$_POST['login_username'];
+            $qc="select password from users where user_name='".$u."'";
+            $out=mysqli_query($cxn,$qc);
+            if(mysqli_num_rows($out)<1)
+            {
+                    $state=1;
+            }
+            $ext=mysqli_fetch_array($out);
+            
+            if(password_verify("'".$_POST['login_password']."'",$ext['password']))
+            {
+                $_SESSION['upusername']=$_POST['login_username'];
+                echo "valid";
+                $login=1;
+            }
+            else
+            {
+                $state=2;
+            }
+        }
+    
+    
+    }
+?>
+
+
+<?php
+    $f=0;
+    $da=0;
+    $da1=0;
+    if(isset($_POST['submit']))
+       {
+        $cxn=mysqli_connect("localhost","root","","sanskriti_db") or die("Cannot connect to database");
+
+            $qc="select * from users where mail='".$_POST['mail']."'";
+            echo $qc;
+            $res=mysqli_query($cxn,$qc);
+            if(!$res)
+            {
+                die("Error");
+               
+            }
+            $nr=mysqli_num_rows($res);
+            if($nr>0)
+            {
+                $f=1;
+            }
+            
+            else
+            {
+                $q="select * from users where user_name='".$_POST['username']."'";
+                echo $q;
+                $res1=mysqli_query($cxn,$q);
+                $da1=mysqli_num_rows($res1);
+                echo "$da1".$da1;
+                if($da1==0)
+                {
+                    echo "inside";
+                    $pass= password_hash("'".$_POST['password']."'",PASSWORD_BCRYPT,array('cost' => 12));
+
+                    
+                    $qc="insert into users(user_name,mail,password,phone,name,inserted_by) values('".$_POST['username']."','".$_POST['mail']."','".$pass."','".$_POST['phone']."','".$_POST['name']."','".$_POST['name']."')";
+                    $out=mysqli_query($cxn,$qc);
+                    if(!$out)
+                    {
+                           $da=2;
+                    }
+                }
+                else
+                {
+                    $da=1;
+                }
+                
+            }
+            
+        }
+       
+?> 
+       
+
+ <?php
+if($login==0)
+{
+    echo '<a href="'."#portfolioModal23".'" class="'."portfolio-link".'" data-toggle="'."modal".'">Sign In</a>';
+}
+else if($login==1)
+{
+    echo '<form action="'."index".".".'php" method="'."post".'">';
+echo '<input type="'."submit".'" value="'."Logout".'" name="'."logout_submit".'" class="'."logout_button".'">';
+echo '</form>';    
+
+}
+ ?>
+
+                        <?php
+if(isset($_POST['logout_submit']))
+    {
+    session_destroy();
+    }
+?>
+
+<?php 
+  if($login==1) {                          
+echo "<p><b>";
+echo '<font size="'."4".'">';
+echo '<a href="'."https://docs.google.com/spreadsheets/d/1VKCwGl9bj1EdvboPT1DRJyiLmLDXIB72It5G9BkGizE/edit?usp=sharing".'">TEMPORARY ACCOMODATION FORM</a></font>';
+echo"</b></p>";
+}
+
+else{
+    echo "<p><b>";
+    echo '<font size="'."4".'">';
+    echo "You are not authorized to view the form. Please sign in to access the form.</font>";
+    echo"</b></p>";
+}
+
+
+Geolocation:
+<script type="text/javascript">
+        var body = document.getElementsByTagName("body")[0];
+        var script = document.createElement('script');
+        script.type = "text/javascript";
+        script.src = "http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js";
+        body.appendChild(script);
+
+        var myCenter=new google.maps.LatLng(42.338372, -71.088729);
+
+        function initialize()
+        {
+        var mapProp = {
+          center: myCenter,
+          zoom:5,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+          };
+
+        var map = new google.maps.Map(document.getElementById("mapholder"),mapProp);
+
+        var marker = new google.maps.Marker({
+          position: myCenter,
+          title:'Click to zoom'
+          });
+
+        marker.setMap(map);
+
+        // Zoom to 9 when clicking on marker
+        google.maps.event.addListener(marker,'click',function() {
+          map.setZoom(9);
+          map.setCenter(marker.getPosition());
+          });
+        }
+        google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
+
+Image gallery:
+
+    <script type="text/javascript">
+        $('#image-gallery-button').on('click', function (event) {
+            event.preventDefault()
+            blueimp.Gallery($('#links a'), $('#blueimp-gallery').data())
+          })
+
+        $('#video-gallery-button').on('click', function (event) {
+        event.preventDefault()
+        blueimp.Gallery([
+          {
+            title: 'Journey of Tarang',
+            href: 'img/Video/Journey.mp4',
+            type: 'video/mp4',
+            poster: 'img/tarang/journey.jpg'
+          },
+          {
+            title: 'Fashion Show',
+            href: 'img/Video/Fashion.mp4',
+            type: 'video/mp4',
+            poster: 'img/tarang/fashion.jpg'
+          },
+          {
+            title: 'Garba  Dance',
+            href: 'img/Video/Garba.mp4',
+            type: 'video/mp4',
+            poster: 'img/tarang/garba.jpg'
+          }
+        ], $('#blueimp-gallery').data())
+      })
+    </script>
+
+
+
+
+CSS Transition:
+
+
+.media {
+  display: inline-block;
+  position: relative;
+  vertical-align: top;
+}
+
+.media__image { display: block; }
+
+.media__body {
+  background: rgba(41, 128, 185, 0.7);
+    border-radius: 50%;
+  bottom: 0;
+  color: white;
+  font-size: 1em;
+  left: 0;
+  opacity: 0;
+  overflow: hidden;
+  padding: 3.75em 3em;
+  position: absolute;
+  text-align: center;
+  top: 0;
+  right: 0;
+  -webkit-transition: 0.8s;
+  transition: 0.8s;
+}
+
+.media__body:hover { opacity: 0.8; }
+
+.media__body:after,
+.media__body:before {
+  border: 1px solid rgba(255, 255, 255, 0.7);   
+   
+  bottom: 1em;
+  content: '';
+  left: 1em;
+  opacity: 0;
+  position: absolute;
+  right: 1em;
+  top: 1em;
+      -webkit-transform: scale(20);
+      -ms-transform: scale(20);
+      transform: scale();
+      -webkit-transition: 0.6s 0.2s;
+      transition: 0.6s 0.2s;
+}
+
+.media__body:before {
+  border-bottom: none;
+  border-top: none;
+  left: 2em;
+  right: 2em;
+}
+
+.media__body:after {
+  border-left: none;
+  border-right: none;
+  bottom: 2em;
+  top: 2em;
+}
+
+.media__body:hover:after,
+.media__body:hover:before {
+  -webkit-transform: scale(1);
+  -ms-transform: scale(1);
+  transform: scale(1);
+  opacity: 0.4;
+}
+
+.media__body h2 { margin-top: 0; }
+
+.media__body p { margin-bottom: 1.5em; }  
+
+
+Google Form:
+<iframe src="https://docs.google.com/forms/d/1EWi_QtmIB-iyt34Qs-_7GLlJDttT3LYJZqgK2WQyQmQ/viewform?embedded=true" 
+width="760" height="1450" style="border: 4px 	
+#0000FF solid;"  marginheight="0" marginwidth="0">Loading...</iframe>
